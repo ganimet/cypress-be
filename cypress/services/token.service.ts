@@ -22,31 +22,25 @@ class TokenService {
         this.token = {};
     }
 
-    async getTokenFromApi(): Promise<Token> {
+    private getTokenFromApi(): Cypress.Chainable<string> {
         const URL = `${this.tokenApiUrl}/tokens`;
         const body = {
             Username: this.username,
             AppKey: this.appKey,
             Hash: this.hash
         } as CreateTokenBody;
-        return new Promise((resolve) => {
-            cy.request({
-                method: 'POST',
-                url: URL,
-                body,
-                failOnStatusCode: false
-            }).then((res) => {
-                this.token = {
-                    value: res.body.token,
-                    createdAt: dayjs().unix(),
-                };
-                resolve({
-                    value: res.body.token,
-                    createdAt: dayjs().unix(),
-                })
-            })
-        }
-        )
+        return cy.request({
+            method: 'POST',
+            url: URL,
+            body,
+            failOnStatusCode: false
+        }).then((res) => {
+            this.token = {
+                value: res.body.token,
+                createdAt: dayjs().unix(),
+            };
+            return res.body.token
+        })
     }
 
     private isTokenExpired(): boolean {
@@ -57,13 +51,13 @@ class TokenService {
         return expireDate > dayjs().unix();
     }
 
-    async getToken(): Promise<string> {
+    getToken(): Cypress.Chainable<string> {
         const isExpired = this.isTokenExpired();
         if (isExpired || !this.token.value) {
-            await this.getTokenFromApi();
+            return this.getTokenFromApi();
         }
         if(this.token.value)
-            return this.token.value;
+            return cy.wrap(this.token.value);
         return this.getToken();
     }
 }
