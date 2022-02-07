@@ -13,7 +13,7 @@ class TokenService {
     private readonly expiryDate: number;
     private token: Token;
 
-    constructor(tokenApiUrl: string, hash="hzh8mKJarBCjH0etqgZDPqMCEHza0XsHPZ8fd1I1tOY=", username = "*", appKey = "HBADMIN", expiryDate = ONE_HOUR_IN_MS) {
+    constructor(tokenApiUrl: string, hash="", username = "*", appKey = "HBADMIN", expiryDate = ONE_HOUR_IN_MS) {
         this.tokenApiUrl = tokenApiUrl;
         this.hash = hash;
         this.username = username;
